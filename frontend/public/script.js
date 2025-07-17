@@ -7,37 +7,46 @@ const copyMsg = document.getElementById("copy-msg");
 const qrContainer = document.getElementById("qrcode");
 
 form.addEventListener("submit", async (e) => {
-e.preventDefault();
-const fullUrl = document.getElementById("full-url").value;
+    e.preventDefault();
+    const fullUrl = document.getElementById("full-url").value;
 
-try {
-    const res = await fetch(`/shorten`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ full: fullUrl }),
-    });
+    try {
+        const res = await fetch(`/shorten`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ full: fullUrl }),
+        });
 
-    const data = await res.json();
-    const shortUrl = `${window.location.origin}/${data.short}`;
+        if (res.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
 
-    shortUrlLink.href = shortUrl;
-    shortUrlLink.textContent = shortUrl;
-    resultDiv.classList.remove("hidden");
-    copyMsg.textContent = "";
+        const data = await res.json();
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
 
-    qrContainer.innerHTML = ""; // clear old QR
-    new QRCode(qrContainer, {
-    text: shortUrl,
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H,
-    });
-} catch (err) {
-    alert("Something went wrong. Check console for details.");
-    console.error(err);
-}
+        const shortUrl = `${window.location.origin}/${data.short}`;
+        shortUrlLink.href = shortUrl;
+        shortUrlLink.textContent = shortUrl;
+        resultDiv.classList.remove("hidden");
+        copyMsg.textContent = "";
+
+        qrContainer.innerHTML = ""; // clear old QR
+        new QRCode(qrContainer, {
+            text: shortUrl,
+            width: 150,
+            height: 150,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H,
+        });
+    } catch (err) {
+        alert("Please login to shorten URLs");
+        console.error(err);
+    }
 });
 
 copyBtn.addEventListener("click", () => {

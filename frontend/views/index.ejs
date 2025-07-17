@@ -1,6 +1,26 @@
 <% layout("boilerplate") %>
     <div class="container">
       <h3>🔗 URL Shortener</h3>
+      <!-- Add Toast Container -->
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+          <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                  <div class="toast-body">
+                      <i class="fas fa-check-circle me-2"></i>URL copied to clipboard!
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+          </div>
+          <!-- Add Signup Success Toast -->
+          <div id="signupToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                  <div class="toast-body">
+                      <i class="fas fa-check-circle me-2"></i>Account created successfully!
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+          </div>
+      </div>
       <form id="url-form">
         <input type="url" id="full-url" placeholder="Enter full URL" required />
         <button type="submit">Shorten</button>
@@ -22,3 +42,71 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+    const urlForm = document.getElementById("url-form");
+    const fullUrlInput = document.getElementById("full-url");
+    const resultDiv = document.getElementById("result");
+    const shortUrlLink = document.getElementById("short-url");
+    const copyBtn = document.getElementById("copy-btn");
+    const copyMsg = document.getElementById("copy-msg");
+
+    urlForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullUrl = fullUrlInput.value;
+      // Call your URL shortening API here and get the short URL
+      const shortUrl = await shortenUrl(fullUrl);
+
+      shortUrlLink.href = shortUrl;
+      shortUrlLink.innerText = shortUrl;
+      resultDiv.classList.remove("hidden");
+      fullUrlInput.value = "";
+    });
+
+    copyBtn.addEventListener("click", () => {
+        const url = shortUrlLink.href;
+        navigator.clipboard
+            .writeText(url)
+            .then(() => {
+                const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+                toast.show();
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    });
+
+    function shortenUrl(url) {
+      // Replace this with your URL shortening logic
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("https://short.url/" + btoa(url));
+        }, 1000);
+      });
+    }
+
+    // QR Code generation
+    const qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: "https://short.url/",
+      width: 128,
+      height: 128,
+    });
+
+    // Update QR Code when short URL is generated
+    resultDiv.addEventListener("DOMSubtreeModified", () => {
+      const shortUrl = shortUrlLink.href;
+      qrcode.clear();
+      qrcode.makeCode(shortUrl);
+    });
+
+    // Check for signup success
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            const toast = new bootstrap.Toast(document.getElementById('signupToast'));
+            toast.show();
+            // Remove the success parameter from URL without refreshing
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>

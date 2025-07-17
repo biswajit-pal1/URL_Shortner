@@ -1,14 +1,32 @@
 <% if(success && success.length){ %>
-    <div class="alert alert-success alert-dismissible fade show col-6 offset-3 " role="alert">
+    <div class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-4 d-flex align-items-center shadow-sm" 
+         role="alert" 
+         style="z-index: 1050; max-width: 500px;">
+        <i class="fas fa-check-circle me-2"></i>
         <%= success %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
 
-
 <% if(error && error.length){ %>
-    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-4 d-flex align-items-center shadow-sm" 
+         role="alert"
+         style="z-index: 1050; max-width: 500px;">
+        <i class="fas fa-exclamation-circle me-2"></i>
         <%= error %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
+
+<script>
+    // Auto dismiss alerts after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 3000);
+        });
+    });
+</script>

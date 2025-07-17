@@ -74,3 +74,166 @@ button:hover {
   display: flex;
   justify-content: center;
 }
+
+/* Profile page styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+/* @media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem !important;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tbody tr {
+        display: block;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .table tbody td {
+        display: block;
+        padding: 0.5rem 0;
+        text-align: left;
+        border: none;
+    }
+    
+    .table td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+    
+    .table td:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+    
+    .table .text-center {
+        text-align: left !important;
+    }
+    
+    .d-flex.align-items-center {
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
+    }
+    
+    .d-flex.align-items-center a {
+        width: 100%;
+        max-width: none;
+    }
+} */
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 1rem !important;
+    }
+
+    .card-header h4 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1.5rem;
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .table td {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem 0;
+        border: none;
+    }
+
+    .table td[data-label]::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+    }
+
+    .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+
+    .d-flex.align-items-center a,
+    .d-flex.align-items-center button {
+        width: 100%;
+    }
+
+    .d-flex.align-items-center button {
+        text-align: center;
+    }
+}
+
+
+
+/* Remove max-width constraint for profile page */
+.container-fluid .card {
+    max-width: none;
+}
+
+
+
+.card {
+  border-radius: 12px;
+}
+
+.card-header {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.btn-light {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.btn-outline-danger {
+  border-radius: 5px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}

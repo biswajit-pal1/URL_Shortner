@@ -98,6 +98,14 @@ const frontendPath = path.resolve(__dirname, '../frontend/public');
 // Serve static files (CSS, JS) from frontend
 app.use(express.static(frontendPath));
 
+// Move isLoggedIn middleware definition to the top with other middleware
+const isLoggedIn = (req, res, next) => {
+    if(!req.isAuthenticated()) {
+        req.flash("error", "You must be signed in");
+        return res.redirect("/login");
+    }
+    next();
+};
 
 // Landing Page
 app.get('/', (req, res) => {
@@ -106,16 +114,41 @@ app.get('/', (req, res) => {
 });
 
 // Redirects to url
-app.post('/shorten', async (req, res) => {
-  const { full } = req.body;
-  const existing = await Url.findOne({ full });
-  if (existing) return res.json(existing);
+app.post('/shorten', isLoggedIn, async (req, res) => {
+    try {
+        const { full } = req.body;
+        
+        const existingUrl = await Url.findOne({
+            full: full,
+            owner: req.user._id
+        });
 
-  const short = nanoid(6);
-  const newUrl = new Url({ full, short });
-  newUrl.owner = req.user._id;
-  await newUrl.save();
-  res.json(newUrl);
+        if (existingUrl) {
+            return res.json(existingUrl);
+        }
+
+        let short;
+        let exists = true;
+        
+        while (exists) {
+            short = nanoid(6);
+            exists = await Url.findOne({ short });
+        }
+
+        const newUrl = new Url({
+            full,
+            short,
+            owner: req.user._id,
+            clicks: 0
+        });
+
+        await newUrl.save();
+        
+        res.json(newUrl);
+    } catch (err) {
+        console.error('Error creating short URL:', err);
+        res.status(500).json({ error: 'Failed to create short URL' });
+    }
 });
 
 //signup
@@ -125,7 +158,7 @@ app.get("/signup", (req, res) => {
 
 
 app.post("/signup", async (req, res, next) => {
-  try {
+    try {
         let {username, email, password} = req.body;
         const newUser = new User({username, email});    
         const registeredUser = await User.register(newUser, password);
@@ -133,8 +166,8 @@ app.post("/signup", async (req, res, next) => {
             if(err) {
                 return next(err);
             }
-            req.flash("success", "Signup complete!");
-            res.redirect("/");
+            req.flash("success", "Welcome to URL Shortener!");
+            res.redirect("/?success=true");
         });
     } catch(err) {
         console.log(err.message);
@@ -165,17 +198,54 @@ app.get("/logout", (req, res) => {
     })
 })
 
-// Short the url here
-app.get('/:short', async (req, res) => {
-  const shortUrl = await Url.findOne({ short: req.params.short });
-  if (!shortUrl) return res.status(404).send('URL not found');
-  
-  shortUrl.clicks++;
-  await shortUrl.save();
-  res.redirect(shortUrl.full);
+  // Profile page route - Move this before the /:short route
+app.get('/profile', isLoggedIn, (req, res) => {
+    res.render('profile.ejs');
 });
 
+// Get user's URLs - Move this before the /:short route
+app.get('/api/urls/user', isLoggedIn, async (req, res) => {
+    try {
+        const urls = await Url.find({ owner: req.user._id }).sort({ _id: -1 });
+        res.json(urls);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch URLs' });
+    }
+});
 
+// Delete URL route - Move this before the /:short route
+app.delete('/api/urls/:short', isLoggedIn, async (req, res) => {
+    try {
+        const url = await Url.findOneAndDelete({ 
+            short: req.params.short, 
+            owner: req.user._id 
+        });
+        
+        if (!url) {
+            return res.status(404).json({ error: 'URL not found' });
+        }
+        
+        res.json({ message: 'URL deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete URL' });
+    }
+});
+
+// Move this to be the last route
+app.get('/:short', async (req, res) => {
+    try {
+        const shortUrl = await Url.findOne({ short: req.params.short });
+        if (!shortUrl) {
+            return res.status(404).send('URL not found');
+        }
+        
+        shortUrl.clicks++;
+        await shortUrl.save();
+        res.redirect(shortUrl.full);
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
+});
 
 app.use((err, req, res, next) => {
     let {statusCode = 500, message = "Something went worng"} = err;

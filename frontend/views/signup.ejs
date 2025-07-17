@@ -1,7 +1,35 @@
 <% layout("boilerplate") %>
-    <div class="d-flex justify-content-center align-items-start" style="margin-top: 7rem; margin-bottom: 7rem;">
-  <div class="card shadow-sm p-4 w-100" style="max-width: 480px; border-radius: 1rem;">
-    
+<!-- Add Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div
+    id="signupToast"
+    class="toast align-items-center text-white bg-success border-0"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="d-flex">
+      <div class="toast-body">
+        <i class="fas fa-check-circle me-2"></i>Account created successfully!
+      </div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="d-flex justify-content-center align-items-start"
+  style="margin-top: 7rem; margin-bottom: 7rem"
+>
+  <div
+    class="card shadow-sm p-4 w-100"
+    style="max-width: 480px; border-radius: 1rem"
+  >
     <!-- Logo/Header -->
     <div class="text-center mb-4">
       <h4 class="mt-2 fw-bold">URL Shortner</h4>
@@ -10,20 +38,38 @@
     <!-- Signup Form -->
     <form action="/signup" method="post" novalidate class="needs-validation">
       <div class="mb-3">
-        <input type="text" id="username" name="username" class="form-control form-control-sm"
-               placeholder="Username" required>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="form-control form-control-sm"
+          placeholder="Username"
+          required
+        />
         <div class="invalid-feedback">Please enter a valid username</div>
       </div>
 
       <div class="mb-3">
-        <input type="email" id="email" name="email" class="form-control form-control-sm"
-               placeholder="Email" required>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-control form-control-sm"
+          placeholder="Email"
+          required
+        />
         <div class="invalid-feedback">Please enter a valid email</div>
       </div>
 
       <div class="mb-3 position-relative">
-        <input type="password" id="password" name="password" class="form-control form-control-sm pe-5"
-               placeholder="Password" required>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control form-control-sm pe-5"
+          placeholder="Password"
+          required
+        />
         <div class="invalid-feedback">Please enter your password</div>
       </div>
 
@@ -37,31 +83,42 @@
 
     <!-- Log in redirect -->
     <div class="text-center mt-2">
-      <p class="mb-0">Already have an account? 
+      <p class="mb-0">
+        Already have an account?
         <a href="/login" class="text-decoration-none">Log in</a>
       </p>
     </div>
-
   </div>
 </div>
 
 <script>
   (() => {
-  'use strict'
+    "use strict";
 
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  const forms = document.querySelectorAll('.needs-validation')
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
 
-  // Loop over them and prevent submission
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
 
-      form.classList.add('was-validated')
-    }, false)
-  })
-})()
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+
+    // Show toast on successful signup
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success") === "true") {
+      const toast = new bootstrap.Toast(document.getElementById("signupToast"));
+      toast.show();
+    }
+  })();
 </script>
