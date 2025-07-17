@@ -1,4 +1,3 @@
-const serverUrl = "http://localhost:3000";
 const form = document.getElementById("url-form");
 const resultDiv = document.getElementById("result");
 const shortUrlLink = document.getElementById("short-url");
@@ -61,5 +60,17 @@ navigator.clipboard
     copyMsg.textContent = "❌ Copy failed";
     console.error(err);
     });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check for login success
+    if (urlParams.get('loginSuccess') === 'true') {
+        const toast = new bootstrap.Toast(document.getElementById('loginToast'));
+        toast.show();
+        // Remove the query parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 });
 

@@ -67,7 +67,7 @@ const sessionOptions = {
     store,
     secret: process.env.SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -110,7 +110,7 @@ const isLoggedIn = (req, res, next) => {
 // Landing Page
 app.get('/', (req, res) => {
   // res.sendFile(path.join(frontendPath, 'index.html'));
-  res.render("index.ejs");
+  res.render("index.ejs", { user: req.user });
 });
 
 // Redirects to url
@@ -184,7 +184,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", passport.authenticate("local", {failureRedirect: "/login", failureFlash: true}), async(req, res) => {
   req.flash("success", "Login Success!");
-    res.redirect("/")
+    res.redirect("/?loginSuccess=true");
 } );
 
 //Logout
