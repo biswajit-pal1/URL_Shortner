@@ -1,0 +1,61 @@
+<% layout("boilerplate") %>
+    <div class="d-flex justify-content-center align-items-start" style="margin-top: 7rem; margin-bottom: 7rem;">
+  <div class="card shadow-sm p-4 w-100" style="max-width: 360px; border-radius: 1rem;">
+    
+    <!-- Logo/Header -->
+    <div class="text-center mb-4">
+      <h4 class="mt-2 fw-bold">URL</h4>
+    </div>
+
+    <!-- Login Form -->
+    <form action="/login" method="post" novalidate class="needs-validation">
+      <div class="mb-3">
+        <input type="text" id="username" name="username" class="form-control form-control-sm" placeholder="Username" required>
+        <div class="invalid-feedback">Please enter your username</div>
+      </div>
+
+      <div class="mb-3 position-relative">
+        <input type="password" id="password" name="password" class="form-control form-control-sm pe-5" placeholder="Password" required>
+        <div class="invalid-feedback">Please enter your password</div>
+      </div>
+
+
+
+      <div class="d-grid">
+        <button class="btn btn-primary btn-sm" type="submit">Log In</button>
+      </div>
+    </form>
+
+    <!-- Divider -->
+    <div class="text-center my-3 text-muted">──────── or ────────</div>
+
+    <!-- Sign up link -->
+    <div class="text-center mt-2">
+      <p class="mb-0">Don't have an account? 
+        <a href="/signup" class="text-decoration-none">Sign up</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>

@@ -1,26 +1,48 @@
 body {
   font-family: Arial, sans-serif;
   background: #f5f5f5;
+  margin: 0;
+}
+
+.main {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: calc(100vh - 56px); /* Adjust if navbar height differs */
+  padding: 2rem;
 }
 
 .container {
   background: white;
-  padding: 2rem;
+  padding: 2rem 3rem;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   text-align: center;
+  width: 100%;
+  max-width: 400px; /* 👈 makes the box smaller */
+}
+
+.navbar {
+    height: 5rem;
+    background-color: white;
+}
+
+.fa-compass {
+    color: #fe424d;
+    font-size: 2rem;
+}
+
+.nav-link{
+    color: #222222 !important;
 }
 
 input[type="url"] {
-  width: 80%;
+  width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box; /* ensures padding doesn't overflow width */
 }
 
 button {
