@@ -4,7 +4,8 @@
     
     <!-- Logo/Header -->
     <div class="text-center mb-4">
-      <h4 class="mt-2 fw-bold">URL</h4>
+      <i class="fa-solid fa-link me-2 fs-5"></i>
+      <h4 class="mt-2 fw-bold">URL Shortener</h4>
     </div>
 
     <!-- Login Form -->
@@ -38,24 +39,3 @@
 
   </div>
 </div>
-
-<script>
-  (() => {
-  'use strict'
-
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  const forms = document.querySelectorAll('.needs-validation')
-
-  // Loop over them and prevent submission
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-
-      form.classList.add('was-validated')
-    }, false)
-  })
-})()
-</script>
