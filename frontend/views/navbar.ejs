@@ -1,51 +1,42 @@
 <link rel="stylesheet" href="style.css" />
+<nav class="navbar navbar-expand-sm bg-white border-bottom sticky-top py-3">
+  <div class="container-fluid middle">
+    <!-- Brand (icon + text aligned) -->
+    <a href="/" class="navbar-brand d-flex align-items-baseline text-dark mb-0">
+      <i class="fa-solid fa-link me-2 fs-5"></i>
+      <span class="fw-semibold fs-5">URL Shortener</span>
+    </a>
 
-<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top py-3">
-  <div class="container-fluid align-items-center">
-    <!-- Left: Logo and Explore (always visible) -->
-    <div class="d-flex order-0">
-      <i
-      class="fa-solid fa-link me-2 navbar-brand d-flex align-items-center"
-      ></i>
-      <a href="/" class="text-decoration-none text-dark">
-        <span
-          class="fw-semibold wanderlust navbar-brand d-flex align-items-center me-4"
-          >URL Shortener</span
-        ></a>
-    </div>
-
-    <!-- Toggler -->
+    <!-- Toggler (visible on xs screens) -->
     <button
-      class="navbar-toggler order-2 ms-auto"
+      class="navbar-toggler ms-auto"
       type="button"
       data-bs-toggle="collapse"
       data-bs-target="#navbarRight"
+      aria-controls="navbarRight"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Collapsible section (will appear on the right) -->
-    <div class="collapse navbar-collapse order-3 flex-grow-0" id="navbarRight">
-      <ul class="navbar-nav text-lg-start mt-2 mt-lg-0">
-        <!-- Explore text (visible only on xs screens) -->
-        <li class="nav-item d-sm-none mb-2">
-          <a class="nav-link fw-semibold" href="/">Explore</a>
-        </li>
-
+    <!-- Collapsible Menu - Updated alignment classes -->
+    <div class="collapse navbar-collapse flex-grow-0" id="navbarRight">
+      <ul class="navbar-nav align-items-sm-center text-start mt-2 mt-sm-0">
         <% if (!currUser) { %>
-        <li class="nav-item">
-          <a class="nav-link fw-bold" href="/signup">Sign up</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link fw-bold" href="/login">Log in</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/signup">Sign up</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/login">Log in</a>
+          </li>
         <% } else { %>
-        <li class="nav-item">
-          <a class="nav-link fw-bold" href="/profile">Your Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link fw-bold" href="/logout">Log out</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/profile">Your Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/logout">Log out</a>
+          </li>
         <% } %>
       </ul>
     </div>

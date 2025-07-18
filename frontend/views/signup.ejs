@@ -32,7 +32,8 @@
   >
     <!-- Logo/Header -->
     <div class="text-center mb-4">
-      <h4 class="mt-2 fw-bold">URL Shortner</h4>
+      <i class="fa-solid fa-link me-2 fs-5"></i>
+      <h4 class="mt-2 fw-bold">URL Shortener</h4>
     </div>
 
     <!-- Signup Form -->
@@ -91,34 +92,3 @@
   </div>
 </div>
 
-<script>
-  (() => {
-    "use strict";
-
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    const forms = document.querySelectorAll(".needs-validation");
-
-    // Loop over them and prevent submission
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-
-    // Show toast on successful signup
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("success") === "true") {
-      const toast = new bootstrap.Toast(document.getElementById("signupToast"));
-      toast.show();
-    }
-  })();
-</script>
