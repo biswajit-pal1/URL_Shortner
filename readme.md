@@ -2,6 +2,8 @@
 
 A simple and efficient URL shortener application that allows users to generate short links for long URLs, track usage, and manage their links easily. Built with Node.js, Express, MongoDB, and EJS, this project provides a user-friendly interface and RESTful API support.
 
+**[Project Link](https://urlink.onrender.com/)**
+
 ---
 
 ## Features
@@ -38,8 +40,8 @@ A simple and efficient URL shortener application that allows users to generate s
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/url-shortener.git
-   cd url-shortener
+   git clone https://github.com/archakkhandayit/URL_Shortner
+   cd URL_Shortner
    ```
 
 2. Install dependencies:
@@ -50,8 +52,8 @@ A simple and efficient URL shortener application that allows users to generate s
 3. Set up environment variables:
    Create a `.env` file in the root directory and add the following:
    ```env
-   PORT=3000
    MONGO_URI=your_mongodb_connection_string
+   PORT=3000
    SESSION_SECRET=your_session_secret
    ```
 
@@ -108,10 +110,8 @@ GET /api/stats/:shortId
 │   └── routes             # API routes
 ├── frontend
 │   ├── views              # EJS templates
-│   │   ├── index.ejs      # Landing page
-│   │   ├── profile.ejs    # Profile page
+│   │   └── index.ejs      # Landing page
 │   └── public             # Static assets (CSS, JS)
-│       ├── script.js      # Frontend JavaScript
 │       └── styles.css     # Custom styles
 ├── .env                   # Environment variables
 ├── package.json           # Project metadata
@@ -120,15 +120,7 @@ GET /api/stats/:shortId
 
 ---
 
-## Screenshots
 
-### Landing Page
-![Landing Page](screenshots/landing-page.png)
-
-### Profile Page
-![Profile Page](screenshots/profile-page.png)
-
----
 
 ## Contributing
 
@@ -138,7 +130,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the ISC License.
 
 ---
 
