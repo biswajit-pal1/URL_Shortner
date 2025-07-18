@@ -108,7 +108,6 @@ const isLoggedIn = (req, res, next) => {
 
 // Landing Page
 app.get('/', (req, res) => {
-  // res.sendFile(path.join(frontendPath, 'index.html'));
   res.render("index.ejs", { user: req.user });
 });
 
