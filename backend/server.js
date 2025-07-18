@@ -22,7 +22,7 @@ const app = express();
 
 
 const PORT = process.env.SERVER_PORT || 3500;
-const MONGODB_URI = process.env.MONGODB_URL;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 
 const connectDB = async () => {
@@ -50,7 +50,7 @@ app.use(express.urlencoded({extended: true}));
 
 
 const store = MongoStore.create({
-    mongoUrl: MONGODB_URL,
+    mongoUrl: MONGODB_URI,
     crypto: {
         secret: process.env.SECRET,
     },
@@ -253,5 +253,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT,async () => {
     await connectDB();
-    console.log(`Server running at ${SERVER_PORT}`);
+    console.log(`Server running at ${PORT}`);
 })
