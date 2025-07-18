@@ -105,6 +105,7 @@ const isLoggedIn = (req, res, next) => {
     next();
 };
 
+
 // Landing Page
 app.get('/', (req, res) => {
   // res.sendFile(path.join(frontendPath, 'index.html'));
@@ -250,7 +251,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("error.ejs", {message});
 });
 
-
+console.log("✅ All middleware and routes loaded. Starting server...");
 app.listen(PORT,async () => {
     await connectDB();
     console.log(`Server running at http://localhost:${PORT}`);
