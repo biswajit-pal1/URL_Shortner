@@ -21,13 +21,13 @@ import User from "./models/user.js";
 const app = express();
 
 
-const SERVER_PORT = process.env.SERVER_PORT || 3500;
-const MONGODB_URL = process.env.MONGODB_URL;
+const PORT = process.env.SERVER_PORT || 3500;
+const MONGODB_URI = process.env.MONGODB_URL;
 
 
 const connectDB = async () => {
   try {
-    const instance = await mongoose.connect(MONGODB_URL);
+    const instance = await mongoose.connect(MONGODB_URI);
     console.log(`MongoDB Connected: ${instance.connection.host}`);
   } catch (e) {
     console.log(e);
@@ -251,7 +251,7 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(SERVER_PORT,async () => {
+app.listen(PORT,async () => {
     await connectDB();
     console.log(`Server running at ${SERVER_PORT}`);
 })
