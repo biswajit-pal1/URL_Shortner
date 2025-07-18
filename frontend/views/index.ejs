@@ -83,7 +83,7 @@
     // Function to shorten URL
     async function shortenUrl(fullUrl) {
         try {
-            const response = await fetch('/shorten', {
+            const response = await fetch('/api/shorten', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

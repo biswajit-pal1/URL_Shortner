@@ -3,7 +3,6 @@ dotenv.config();
 
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 import { nanoid } from "nanoid";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -37,7 +36,6 @@ const connectDB = async () => {
 
 
 app.use(express.json());
-app.use(cors());
 
 
 
@@ -114,7 +112,7 @@ app.get('/', (req, res) => {
 });
 
 // Redirects to url
-app.post('/shorten', isLoggedIn, async (req, res) => {
+app.post('/api/shorten', isLoggedIn, async (req, res) => {
     try {
         const { full } = req.body;
         
@@ -236,7 +234,7 @@ app.get('/:short', async (req, res) => {
     try {
         const shortUrl = await Url.findOne({ short: req.params.short });
         if (!shortUrl) {
-            return res.status(404).send('URL not found');
+            return res.status(404).render('404');
         }
         
         shortUrl.clicks++;
@@ -253,7 +251,7 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(SERVER_PORT, () => {
-    connectDB();
+app.listen(SERVER_PORT,async () => {
+    await connectDB();
     console.log(`Server running at ${SERVER_PORT}`);
 })

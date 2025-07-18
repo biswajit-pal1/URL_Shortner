@@ -22,11 +22,6 @@ body {
   max-width: 400px; /* 👈 makes the box smaller */
 }
 
-.navbar {
-    height: 5rem;
-    background-color: white;
-}
-
 .nav-link{
     color: #222222 !important;
 }
@@ -179,10 +174,6 @@ button:hover {
 
 .table-responsive {
   overflow-x: auto;
-}
-
-@media (max-width: 576px) {
-  
 }
 
 .navbar {

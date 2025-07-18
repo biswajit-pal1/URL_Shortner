@@ -1,6 +1,6 @@
 <% layout("boilerplate") %>
 <div class="container-fluid px-4 mt-4">
-  <!-- Add Toast Container -->
+  <!-- Toast Container -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
@@ -11,6 +11,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Main Card -->
   <div class="row justify-content-center">
     <div class="col-12 col-xl-10">
       <div class="card shadow">
@@ -19,17 +21,17 @@
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 w-100">
               <thead class="bg-light">
                 <tr>
-                  <th class="px-4" style="width: 45%">Original URL</th>
-                  <th style="width: 35%">Short URL</th>
-                  <th class="text-center" style="width: 10%">Clicks</th>
-                  <th class="text-center" style="width: 10%">Actions</th>
+                  <th class="px-4">Original URL</th>
+                  <th>Short URL</th>
+                  <th class="text-center">Clicks</th>
+                  <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="urlsList">
-                <!-- URLs will be populated here via JavaScript -->
+                <!-- URLs populated by JS -->
               </tbody>
             </table>
           </div>
@@ -39,6 +41,63 @@
   </div>
 </div>
 
+<!-- ✅ Responsive Fixes -->
+<style>
+  @media (max-width: 576px) {
+    thead {
+      display: none;
+    }
+
+    tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid #dee2e6;
+      word-break: break-word;
+      white-space: normal;
+    }
+
+    td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #6c757d;
+      margin-right: 1rem;
+    }
+
+    .table-responsive {
+      overflow-x: hidden;
+    }
+
+    .btn {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .d-flex.flex-sm-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+  }
+
+  .table td div {
+    word-break: break-word;
+    white-space: normal !important;
+  }
+
+  a {
+    word-break: break-word;
+  }
+</style>
+
+<!-- ✅ JavaScript -->
 <script>
   const loadUrls = async () => {
     try {
@@ -48,59 +107,60 @@
 
       if (urls.length === 0) {
         urlsList.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center py-5">
-                            <div class="d-flex flex-column align-items-center">
-                                <i class="fas fa-link fa-2x text-muted mb-3"></i>
-                                <h5 class="text-muted">No URLs found</h5>
-                                <p class="text-muted mb-0">Create your first short URL!</p>
-                            </div>
-                        </td>
-                    </tr>`;
+          <tr>
+            <td colspan="4" class="text-center py-5">
+              <div class="d-flex flex-column align-items-center">
+                <i class="fas fa-link fa-2x text-muted mb-3"></i>
+                <h5 class="text-muted">No URLs found</h5>
+                <p class="text-muted mb-0">Create your first short URL!</p>
+              </div>
+            </td>
+          </tr>`;
         return;
       }
 
       urlsList.innerHTML = urls
         .map(
           (url) => `
-                <tr>
-                    <td class="px-4" data-label="Original URL">
-                        <div class="text-truncate" style="max-width: 100%;" title="${url.full}">
-                            ${url.full}
-                        </div>
-                    </td>
-                    <td data-label="Short URL">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <a href="/${url.short}" class="text-truncate text-decoration-none flex-grow-1" target="_blank">
-                                ${window.location.origin}/${url.short}
-                            </a>
-                            <button onclick="copyUrl('${url.short}')" class="btn btn-sm btn-light ms-auto" title="Copy URL">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </td>
-                    <td class="text-center" data-label="Clicks">
-                        <span class="badge bg-primary rounded-pill px-3">
-                            ${url.clicks}
-                        </span>
-                    </td>
-                    <td class="text-center" data-label="Actions">
-                        <button onclick="deleteUrl('${url.short}')" class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
+            <tr>
+              <td class="px-4" data-label="Original URL">
+                <div title="${url.full}">
+                  ${url.full}
+                </div>
+              </td>
+              <td data-label="Short URL">
+                <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2">
+                  <a href="/${url.short}" class="text-decoration-none" target="_blank">
+                    ${window.location.origin}/${url.short}
+                  </a>
+                  <button onclick="copyUrl('${url.short}')" class="btn btn-sm btn-light" title="Copy URL">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="text-center" data-label="Clicks">
+                <span class="badge bg-primary rounded-pill px-3">
+                  ${url.clicks}
+                </span>
+              </td>
+              <td class="text-center" data-label="Actions">
+                <div class="d-flex justify-content-center">
+                  <button onclick="deleteUrl('${url.short}')" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>`
         )
         .join("");
     } catch (err) {
       console.error("Error loading URLs:", err);
       document.getElementById("urlsList").innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger py-4">
-                        Error loading URLs. Please try again.
-                    </td>
-                </tr>`;
+        <tr>
+          <td colspan="4" class="text-center text-danger py-4">
+            Error loading URLs. Please try again.
+          </td>
+        </tr>`;
     }
   };
 
@@ -130,6 +190,6 @@
     }
   };
 
-  // Load URLs when page loads
+  // Load on page load
   loadUrls();
 </script>
