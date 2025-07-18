@@ -21,7 +21,7 @@ import User from "./models/user.js";
 const app = express();
 
 
-const PORT = process.env.SERVER_PORT || 3500;
+const PORT = process.env.PORT || 3500;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 
@@ -253,5 +253,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT,async () => {
     await connectDB();
-    console.log(`Server running at ${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 })
