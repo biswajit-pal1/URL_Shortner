@@ -1,4 +1,14 @@
 <% layout("boilerplate") %>
+<style>
+  .was-validated input.form-control:valid,
+  .was-validated input.form-control:invalid,
+  input.form-control.is-valid,
+  input.form-control.is-invalid {
+    background-image: none !important;
+    padding-right: 2.5rem;
+}
+</style>
+
 <!-- Add Toast Container -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div
@@ -71,6 +81,7 @@
           placeholder="Password"
           required
         />
+        <i class="fa-regular fa-eye-slash toggle-password"></i>
         <div class="invalid-feedback">Please enter your password</div>
       </div>
 

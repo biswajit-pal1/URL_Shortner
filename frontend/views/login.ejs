@@ -1,5 +1,14 @@
 <% layout("boilerplate") %>
-    <div class="d-flex justify-content-center align-items-start" style="margin-top: 7rem; margin-bottom: 7rem;">
+  <style>
+    .was-validated input.form-control:valid,
+    .was-validated input.form-control:invalid,
+    input.form-control.is-valid,
+    input.form-control.is-invalid {
+      background-image: none !important;
+      padding-right: 2.5rem;
+    }
+  </style>
+  <div class="d-flex justify-content-center align-items-start" style="margin-top: 7rem; margin-bottom: 7rem;">
   <div class="card shadow-sm p-4 w-100" style="max-width: 360px; border-radius: 1rem;">
     
     <!-- Logo/Header -->
@@ -17,6 +26,7 @@
 
       <div class="mb-3 position-relative">
         <input type="password" id="password" name="password" class="form-control form-control-sm pe-5" placeholder="Password" required>
+        <i class="fa-regular fa-eye-slash toggle-password"></i>
         <div class="invalid-feedback">Please enter your password</div>
       </div>
 
