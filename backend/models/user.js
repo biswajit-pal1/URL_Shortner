@@ -7,7 +7,13 @@ const userSchema = new Schema({
     email : {
         type: String,
         required: true
+    },
+    activeSessionId: {
+        type: String,
+        default: null
     }
+}, {
+    timestamps: true
 });
 
 userSchema.plugin(passportLocalMongoose);
