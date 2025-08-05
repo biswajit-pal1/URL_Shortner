@@ -1,156 +1,368 @@
 <% layout("boilerplate") %>
-    <div class="container">
-      <h3>🔗 URL Shortener</h3>
-      <!-- Add Toast Container -->
-      <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <!-- Copy Toast -->
-          <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-              <div class="d-flex">
-                  <div class="toast-body">
-                      <i class="fas fa-check-circle me-2"></i>URL copied to clipboard!
-                  </div>
-                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-              </div>
-          </div>
-          <!-- Add Signup Success Toast -->
-          <div id="signupToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-              <div class="d-flex">
-                  <div class="toast-body">
-                      <i class="fas fa-check-circle me-2"></i>Account created successfully!
-                  </div>
-                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-              </div>
-          </div>
-          <!-- Login Success Toast -->
-    <div id="loginToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                <i class="fas fa-check-circle me-2"></i>Login successful!
+    <!-- <div class="container py-5"> -->
+        <div class="row justify-content-center py-5">
+            <div class="col-12 col-lg-8">
+                <div class="main-card p-5 fade-in">
+                    <% if (user) { %>
+                        <!-- Header -->
+                        <div class="text-center mb-5">
+                            <div class="feature-icon mb-3">
+                                <i class="fa-solid fa-link"></i>
+                            </div>
+                            <h1 class="title-gradient mb-3">Shorten Your URL</h1>
+                            <p class="text-muted fs-5">Transform long URLs into short, shareable links with QR codes</p>
+                        </div>
+
+                        <!-- URL Input Form -->
+                        <form id="url-form" class="url-input-group">
+                            <div class="input-group flex-column flex-sm-row">
+                                <input
+                                type="url"
+                                id="full-url"
+                                class="form-control url-input"
+                                placeholder="https://example.com/very-long-url..."
+                                required
+                                aria-label="URL to shorten"
+                                />
+                                <button class="btn shorten-btn mt-2 mt-sm-0" type="submit" id="shorten-btn">
+                                <span class="btn-text">
+                                    <i class="fas fa-magic me-2"></i>Shorten URL
+                                </span>
+                                <div class="loading-spinner d-none"></div>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Result Display -->
+                        <div id="result" class="result-card p-4 d-none">
+                            <div class="text-center">
+                                <h5 class="fw-bold mb-4">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Your shortened URL is ready!
+                                </h5>
+                                
+                                <div class="short-url-display">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small class="text-muted fw-semibold">SHORTENED URL</small>
+                                        <button id="copy-btn" class="copy-btn btn-sm">
+                                            <i class="fas fa-copy me-1"></i>
+                                            <span class="copy-text">Copy</span>
+                                        </button>
+                                    </div>
+                                    <a id="short-url" href="#" target="_blank" class="short-url-link d-block"></a>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6 mb-3">
+                                        <h6 class="fw-semibold mb-3">
+                                            <i class="fas fa-qrcode me-2 text-primary"></i>QR Code
+                                        </h6>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="qr-container">
+                                                <div id="qrcode"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <h6 class="fw-semibold mb-3">
+                                            <i class="fas fa-chart-line me-2 text-primary"></i>Quick Stats
+                                        </h6>
+                                        <div class="text-start">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span class="text-muted">Original length:</span>
+                                                <span id="original-length" class="fw-semibold">0</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span class="text-muted">Shortened length:</span>
+                                                <span id="shortened-length" class="fw-semibold">0</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted">Saved characters:</span>
+                                                <span id="saved-chars" class="fw-semibold text-success">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Not logged in content -->
+                        <div class="text-center auth-container">
+                            <div class="feature-icon mb-3">
+                                <i class="fa-solid fa-link"></i>
+                            </div>
+                            <h1 class="title-gradient mb-4">Welcome to URL Shortener</h1>
+                            <p class="text-muted mb-4 fs-5">Please log in to shorten URLs and access your link history</p>
+                            
+                            <div>
+                                <a href="/login" class="btn btn-primary auth-btn px-5">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Log In
+                                </a>
+                            </div>
+                            <div class="mt-3">
+                                <a href="/signup" class="btn btn-outline-primary auth-btn">
+                                    <i class="fas fa-user-plus me-2"></i>Create Account
+                                </a>
+                            </div>
+                            
+                            <div class="mt-4 pt-3 border-top">
+                                <p class="text-muted mb-0">
+                                    By continuing, you agree to our 
+                                    <a href="/terms" class="text-decoration-none">Terms</a> and 
+                                    <a href="/privacy" class="text-decoration-none">Privacy Policy</a>.
+                                </p>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div id="copyToast" class="toast toast-custom" role="alert">
+            <div class="toast-body d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span>URL copied to clipboard!</span>
+            </div>
         </div>
     </div>
-      </div>
 
-      <% if (user) { %>
-      <form id="url-form">
-        <input type="url" id="full-url" placeholder="Enter full URL" required />
-        <button type="submit">Shorten</button>
-      </form>
-
-      <div id="result" class="hidden">
-        <p>
-          Short URL:
-          <a id="short-url" href="#" target="_blank"></a>
-        </p>
-        <button id="copy-btn">📋 Copy</button>
-
-        <h3>📱 Or, scan the QR Code:</h3>
-        <div id="outterQr">
-          <div id="qrcode"></div>
-        </div>
-      </div>
-         <% } else { %>
-          <div class="text-center">
-            <p class="mb-4">Please log in to shorten URLs</p>
-            <a href="/login" class="btn btn-primary">Log In</a>
-            <p class="mt-3">
-                Don't have an account? 
-                <a href="/signup" class="text-decoration-none">Sign up</a>
-            </p>
-        </div>
-    <% } %>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script>
-  
-
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <% if (user) { %>
+    <script>
+    // DOM Elements
     const urlForm = document.getElementById("url-form");
     const fullUrlInput = document.getElementById("full-url");
     const resultDiv = document.getElementById("result");
     const shortUrlLink = document.getElementById("short-url");
     const copyBtn = document.getElementById("copy-btn");
+    const shortenBtn = document.getElementById("shorten-btn");
+    
+    // Only proceed if required elements exist
+    if (urlForm && fullUrlInput && resultDiv && shortUrlLink && copyBtn && shortenBtn) {
+        const btnText = shortenBtn.querySelector(".btn-text");
+        const loadingSpinner = shortenBtn.querySelector(".loading-spinner");
 
-    // Initialize QR Code
-    const qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: window.location.origin,
-        width: 128,
-        height: 128
-    });
+        let qrCodeInstance = null;
 
-    // Function to shorten URL
-    async function shortenUrl(fullUrl) {
-        try {
-            const response = await fetch('/api/shorten', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ full: fullUrl })
+        // Responsive layout handler
+        function handleResponsiveLayout() {
+            const inputGroup = urlForm.querySelector('.input-group');
+            if (!inputGroup) return;
+
+            if (window.innerWidth < 576) {
+                // Mobile layout
+                inputGroup.style.flexDirection = 'column';
+                fullUrlInput.style.borderRadius = '12px 12px 0 0';
+                fullUrlInput.style.width = '100%';
+                shortenBtn.style.borderRadius = '0 0 12px 12px';
+                shortenBtn.style.width = '100%';
+                shortenBtn.style.marginTop = '-1px';
+            } else {
+                // Desktop layout
+                inputGroup.style.flexDirection = 'row';
+                fullUrlInput.style.borderRadius = '12px 0 0 12px';
+                fullUrlInput.style.width = '';
+                shortenBtn.style.borderRadius = '0 12px 12px 0';
+                shortenBtn.style.width = 'auto';
+                shortenBtn.style.marginTop = '';
+            }
+        }
+
+        // Initialize responsive layout
+        window.addEventListener('load', handleResponsiveLayout);
+        window.addEventListener('resize', handleResponsiveLayout);
+
+        function initQRCode() {
+            const qrElement = document.getElementById("qrcode");
+            if (!qrElement) return;
+            
+            qrElement.innerHTML = "";
+            qrCodeInstance = new QRCode(qrElement, {
+                width: 120,
+                height: 120,
+                colorDark: "#1f2937",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
             });
-
-            if (response.status === 401) {
-                window.location.href = '/login';
-                return;
-            }
-
-            const data = await response.json();
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
-            return `${window.location.origin}/${data.short}`;
-        } catch (err) {
-            console.error('Error shortening URL:', err);
-            throw err;
         }
-    }
 
-    // Handle form submission
-    urlForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        try {
-            const fullUrl = fullUrlInput.value;
-            const shortUrl = await shortenUrl(fullUrl);
+        function showLoading(show) {
+            if (!btnText || !loadingSpinner) return;
             
-            if (!shortUrl) return; // If no shortUrl returned, the user was redirected
-            
-            shortUrlLink.href = shortUrl;
-            shortUrlLink.innerText = shortUrl;
-            resultDiv.classList.remove("hidden");
-            fullUrlInput.value = "";
-            
-            // Update QR code
-            qrcode.clear();
-            qrcode.makeCode(shortUrl);
-        } catch (err) {
-            alert("Error: " + (err.message || "Failed to shorten URL"));
+            if (show) {
+                btnText.classList.add("d-none");
+                loadingSpinner.classList.remove("d-none");
+                shortenBtn.classList.add("loading");
+                shortenBtn.disabled = true;
+            } else {
+                btnText.classList.remove("d-none");
+                loadingSpinner.classList.add("d-none");
+                shortenBtn.classList.remove("loading");
+                shortenBtn.disabled = false;
+            }
         }
-    });
 
-    // Handle copy button click
-    copyBtn.addEventListener("click", () => {
-        const url = shortUrlLink.href;
-        navigator.clipboard
-            .writeText(url)
-            .then(() => {
+        function updateStats(originalUrl, shortUrl) {
+            const originalLength = document.getElementById("original-length");
+            const shortenedLength = document.getElementById("shortened-length");
+            const savedChars = document.getElementById("saved-chars");
+            
+            if (originalLength) originalLength.textContent = originalUrl.length;
+            if (shortenedLength) shortenedLength.textContent = shortUrl.length;
+            if (savedChars) savedChars.textContent = originalUrl.length - shortUrl.length;
+        }
+
+        async function shortenUrl(fullUrl) {
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full: fullUrl })
+                });
+
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return null;
+                }
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                return `${window.location.origin}/${data.short}`;
+            } catch (err) {
+                console.error("Shorten URL error:", err);
+                throw new Error(err.message || "Failed to shorten URL");
+            }
+        }
+
+        urlForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const fullUrl = fullUrlInput.value.trim();
+            if (!fullUrl) return;
+
+            showLoading(true);
+
+            try {
+                const shortUrl = await shortenUrl(fullUrl);
+                if (!shortUrl) return;
+
+                // Update UI
+                shortUrlLink.href = shortUrl;
+                shortUrlLink.textContent = shortUrl;
+                updateStats(fullUrl, shortUrl);
+                
+                // Show result with animation
+                resultDiv.classList.remove("d-none");
+                setTimeout(() => {
+                    resultDiv.classList.add("show");
+                }, 100);
+                
+                // Generate QR code
+                initQRCode();
+                if (qrCodeInstance) {
+                    qrCodeInstance.makeCode(shortUrl);
+                }
+                
+                // Clear input
+                fullUrlInput.value = "";
+                
+                // Scroll to result
+                resultDiv.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: window.innerWidth < 576 ? 'start' : 'center' 
+                });
+                
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Error: " + err.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        copyBtn.addEventListener("click", async () => {
+            const url = shortUrlLink.href;
+            try {
+                await navigator.clipboard.writeText(url);
+                
+                // Update button state
+                const copyText = copyBtn.querySelector(".copy-text");
+                const icon = copyBtn.querySelector("i");
+                
+                if (copyText && icon) {
+                    copyBtn.classList.add("copied");
+                    copyText.textContent = "Copied!";
+                    icon.className = "fas fa-check me-1";
+                    
+                    const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+                    toast.show();
+                    
+                    setTimeout(() => {
+                        copyBtn.classList.remove("copied");
+                        copyText.textContent = "Copy";
+                        icon.className = "fas fa-copy me-1";
+                    }, 2000);
+                }
+                
+            } catch (err) {
+                console.error("Failed to copy:", err);
+                alert("Failed to copy URL to clipboard");
+            }
+        });
+
+        // Mobile input optimization
+        function setupMobileUX() {
+            if (window.innerWidth < 768) {
+                fullUrlInput.setAttribute('inputmode', 'url');
+                fullUrlInput.setAttribute('autocapitalize', 'off');
+                
+                // Larger tap targets
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.style.minHeight = '48px';
+                });
+            }
+        }
+
+        // URL validation
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        fullUrlInput.addEventListener('input', () => {
+            const url = fullUrlInput.value.trim();
+            if (url && !isValidUrl(url)) {
+                fullUrlInput.classList.add('is-invalid');
+            } else {
+                fullUrlInput.classList.remove('is-invalid');
+            }
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            handleResponsiveLayout();
+            setupMobileUX();
+            
+            // Handle success parameter
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('success') === 'true') {
                 const toast = new bootstrap.Toast(document.getElementById('copyToast'));
                 toast.show();
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    });
+            }
+        });
 
-    // Check for signup success
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('success') === 'true') {
-            const toast = new bootstrap.Toast(document.getElementById('signupToast'));
-            toast.show();
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    });
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            handleResponsiveLayout();
+            setupMobileUX();
+        });
+    }
 </script>
+<% } %>
