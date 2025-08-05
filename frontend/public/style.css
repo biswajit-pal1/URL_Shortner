@@ -2,38 +2,52 @@ body {
   font-family: Arial, sans-serif;
   background: #f5f5f5;
   margin: 0;
+  background: var(--primary-gradient);
 }
 
 .main {
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 56px); /* Adjust if navbar height differs */
+  min-height: calc(100vh - 56px); 
   padding: 2rem;
 }
 
-.container {
+.url-shortener-page .main {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.url-shortener-page {
+    padding: 0;
+    margin: 0;
+}
+
+/* .container {
   background: white;
   padding: 2rem 3rem;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 100%;
-  max-width: 400px; /* 👈 makes the box smaller */
-}
+  max-width: 400px;
+}  */
 
 .nav-link{
     color: #222222 !important;
 }
 
-input[type="url"] {
+/* input[type="url"] {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box; /* ensures padding doesn't overflow width */
-}
+  box-sizing: border-box;
+} */
 
 button {
   padding: 10px 20px;
@@ -142,14 +156,10 @@ button:hover {
     }
 }
 
-
-
 /* Remove max-width constraint for profile page */
 .container-fluid .card {
     max-width: none;
 }
-
-
 
 .card {
   border-radius: 12px;
@@ -196,10 +206,219 @@ button:hover {
 
 /* Password toggle button */
 .toggle-password {
-    position: absolute; 
-    top: 15px; 
-    right: 10px; 
-    transform: translateY(-50%); 
-    cursor: pointer; 
-    display: none
+  position: absolute; 
+  top: 15px; 
+  right: 10px; 
+  transform: translateY(-50%); 
+  cursor: pointer; 
+  display: none
+}
+
+/* Index Page Design */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --success-color: #10b981;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+body {
+  background: var(--primary-gradient);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.main-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.title-gradient {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: 3rem;
+}
+
+.url-input-group .input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.url-input {
+  border: 2px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.url-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  outline: none;
+  background: white;
+}
+
+.shorten-btn {
+  background: var(--primary-gradient);
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.shorten-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Mobile Layout */
+@media (max-width: 576px) {
+  .url-input-group .input-group {
+      flex-direction: column;
+  }
+  
+  .url-input {
+      border-radius: 12px 12px 0 0 !important;
+      width: 100% !important;
+  }
+  
+  .shorten-btn {
+      border-radius: 0 0 12px 12px !important;
+      width: 100% !important;
+      margin-top: -1px;
+  }
+
+  .title-gradient {
+      font-size: 2rem !important;
+  }
+}
+
+/* Desktop Layout */
+@media (min-width: 577px) {
+  .url-input {
+      border-radius: 12px 0 0 12px !important;
+      flex-grow: 1;
+  }
+  
+  .shorten-btn {
+      border-radius: 0 12px 12px 0 !important;
+      width: auto !important;
+  }
+}
+
+/* Rest of your existing styles... */
+.result-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.result-card.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.short-url-display {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.short-url-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.2rem;
+  word-break: break-all;
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.toast-custom {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile viewport fixes */
+@media (max-width: 768px) {
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+  
+  .main-card {
+    padding: 1.5rem !important;
+    margin: 0 -15px;
+    border-radius: 0;
+  }
 }
