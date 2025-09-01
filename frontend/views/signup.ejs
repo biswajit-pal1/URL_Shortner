@@ -6,48 +6,87 @@
   input.form-control.is-invalid {
     background-image: none !important;
     padding-right: 2.5rem;
-}
+  }
+  
+  .input-group .form-control {
+    border-right: none;
+  }
+  
+  .input-group .btn {
+    border-left: none;
+    border-color: #ced4da;
+  }
+  
+  .verified-badge {
+    background: #d1edff;
+    color: #0a58ca;
+    border: 1px solid #b6d7ff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .otp-section {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 
-<!-- Add Toast Container -->
+<!-- Toast Container -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div
-    id="signupToast"
-    class="toast align-items-center text-white bg-success border-0"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-  >
+  <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">
-        <i class="fas fa-check-circle me-2"></i>Account created successfully!
+        <i class="fas fa-check-circle me-2"></i><span id="successMessage">Account created successfully!</span>
       </div>
-      <button
-        type="button"
-        class="btn-close btn-close-white me-2 m-auto"
-        data-bs-dismiss="toast"
-        aria-label="Close"
-      ></button>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+  
+  <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        <i class="fas fa-exclamation-circle me-2"></i><span id="errorMessage">Something went wrong!</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+  
+  <div id="infoToast" class="toast align-items-center text-white bg-info border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        <i class="fas fa-info-circle me-2"></i><span id="infoMessage">OTP sent to your email!</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
     </div>
   </div>
 </div>
 
-<div
-  class="d-flex justify-content-center align-items-start"
-  style="margin-top: 7rem; margin-bottom: 7rem"
->
-  <div
-    class="card shadow-sm p-4 w-100"
-    style="max-width: 480px; border-radius: 1rem"
-  >
+<div class="d-flex justify-content-center align-items-start" style="margin-top: 7rem; margin-bottom: 7rem">
+  <div class="card shadow-sm p-4 w-100" style="max-width: 480px; border-radius: 1rem">
     <!-- Logo/Header -->
     <div class="text-center mb-4">
       <i class="fa-solid fa-link me-2 fs-5"></i>
       <h4 class="mt-2 fw-bold">URL Shortener</h4>
     </div>
 
-    <!-- Signup Form -->
-    <form action="/signup" method="post" novalidate class="needs-validation">
+    <!-- Signup Form - Now includes action and method for fallback -->
+    <form id="signupForm" action="/signup" method="post" novalidate class="needs-validation">
+      <!-- Username -->
       <div class="mb-3">
         <input
           type="text"
@@ -60,18 +99,68 @@
         <div class="invalid-feedback">Please enter a valid username</div>
       </div>
 
+      <!-- Email with Verify Button -->
       <div class="mb-3">
-        <input
-          type="email"
-          id="email"
-          name="email"
-          class="form-control form-control-sm"
-          placeholder="Email"
-          required
-        />
+        <div class="input-group input-group-sm">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Email"
+            required
+          />
+          <button
+            type="button"
+            id="verifyEmailBtn"
+            class="btn btn-outline-primary"
+            disabled
+          >
+            <i class="fas fa-paper-plane me-1"></i>Verify
+          </button>
+        </div>
         <div class="invalid-feedback">Please enter a valid email</div>
+        
+        <!-- Email Verified Badge -->
+        <div id="emailVerifiedBadge" class="mt-2" style="display: none;">
+          <span class="verified-badge">
+            <i class="fas fa-check-circle me-1"></i>Email Verified
+          </span>
+        </div>
       </div>
 
+      <!-- OTP Verification Section -->
+      <div id="otpSection" class="mb-3" style="display: none;">
+        <div class="otp-section fade-in">
+          <label class="form-label mb-2">
+            <i class="fas fa-shield-alt me-1"></i>Enter verification code
+          </label>
+          <div class="input-group input-group-sm">
+            <input
+              type="text"
+              id="otpInput"
+              class="form-control"
+              placeholder="6-digit code"
+              maxlength="6"
+              pattern="[0-9]{6}"
+            />
+            <button
+              type="button"
+              id="verifyOtpBtn"
+              class="btn btn-success"
+            >
+              <i class="fas fa-check me-1"></i>Verify OTP
+            </button>
+          </div>
+          <small class="text-muted mt-1">Check your email for the verification code</small>
+        </div>
+      </div>
+
+      <!-- Hidden field to track email verification status -->
+      <input type="hidden" id="emailVerified" name="emailVerified" value="false" />
+      <input type="hidden" id="otpId" name="otpId" value="" />
+
+      <!-- Password -->
       <div class="mb-3 position-relative">
         <input
           type="password"
@@ -85,8 +174,23 @@
         <div class="invalid-feedback">Please enter your password</div>
       </div>
 
+      <!-- Submit Button -->
       <div class="d-grid">
-        <button class="btn btn-primary btn-sm" type="submit">Sign Up</button>
+        <button 
+          class="btn btn-primary btn-sm" 
+          type="submit"
+          id="signupBtn"
+        >
+          <i class="fas fa-user-plus me-2"></i>Sign Up
+        </button>
+      </div>
+      
+      <!-- Fallback notice -->
+      <div class="text-center mt-2">
+        <small class="text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          Email verification recommended but optional
+        </small>
       </div>
     </form>
 
@@ -103,3 +207,251 @@
   </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const signupForm = document.getElementById('signupForm');
+  const emailInput = document.getElementById('email');
+  const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+  const otpSection = document.getElementById('otpSection');
+  const otpInput = document.getElementById('otpInput');
+  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+  const signupBtn = document.getElementById('signupBtn');
+  const emailVerifiedBadge = document.getElementById('emailVerifiedBadge');
+  const emailVerifiedField = document.getElementById('emailVerified');
+  const otpIdField = document.getElementById('otpId');
+  
+  let otpMongoId = null;
+  let isEmailVerified = false;
+  let useJavaScriptSubmission = true;
+
+  // Enable verify email button when valid email is entered
+  emailInput.addEventListener('input', function() {
+    const isValidEmail = this.checkValidity() && this.value.length > 0;
+    verifyEmailBtn.disabled = !isValidEmail || isEmailVerified;
+    
+    if (!isValidEmail && isEmailVerified) {
+      resetEmailVerification();
+    }
+  });
+
+  // Send OTP
+  verifyEmailBtn.addEventListener('click', async function() {
+    const email = emailInput.value.trim();
+    
+    if (!email || !emailInput.checkValidity()) {
+      showToast('errorToast', 'Please enter a valid email');
+      return;
+    }
+
+    verifyEmailBtn.disabled = true;
+    verifyEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+
+    try {
+      const response = await fetch('/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        otpMongoId = result.otpId;
+        showOtpSection();
+        showToast('infoToast', 'Verification code sent to your email!');
+      } else {
+        showToast('errorToast', result.message || 'Failed to send verification code');
+        verifyEmailBtn.disabled = false;
+        verifyEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Verify';
+      }
+    } catch (error) {
+      console.error('OTP send error:', error);
+      showToast('errorToast', 'Network error. Please try again.');
+      verifyEmailBtn.disabled = false;
+      verifyEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Verify';
+      useJavaScriptSubmission = false; // Fallback to regular form submission
+    }
+  });
+
+  // Verify OTP
+  verifyOtpBtn.addEventListener('click', async function() {
+    const otp = otpInput.value.trim();
+    
+    if (!otp || otp.length !== 6) {
+      showToast('errorToast', 'Please enter a valid 6-digit code');
+      return;
+    }
+
+    verifyOtpBtn.disabled = true;
+    verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Verifying...';
+
+    try {
+      const response = await fetch('/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          otpId: otpMongoId,
+          otp: otp 
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        isEmailVerified = true;
+        hideOtpSection();
+        showEmailVerified();
+        updateHiddenFields();
+        showToast('successToast', 'Email verified successfully!');
+      } else {
+        showToast('errorToast', result.message || 'Incorrect OTP. Please try again.');
+        otpInput.value = '';
+      }
+    } catch (error) {
+      console.error('OTP verify error:', error);
+      showToast('errorToast', 'Network error. Please try again.');
+      otpInput.value = '';
+      useJavaScriptSubmission = false; // Fallback to regular form submission
+    } finally {
+      verifyOtpBtn.disabled = false;
+      verifyOtpBtn.innerHTML = '<i class="fas fa-check me-1"></i>Verify OTP';
+    }
+  });
+
+  // OTP Input - Only numbers
+  otpInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  // Form submission with fallback
+  signupForm.addEventListener('submit', async function(e) {
+    // Always validate the form first
+    if (!this.checkValidity() ) {
+      e.preventDefault();
+      this.classList.add('was-validated');
+      return;
+    }
+    // Check if email is verified on not
+    if (!isEmailVerified) {
+      showToast('errorToast', 'Please verify your email first');
+      return;
+    }
+
+    // If JavaScript submission is disabled, let the form submit normally
+    if (!useJavaScriptSubmission) {
+      return; // Let the form submit normally
+    }
+
+    // Prevent default and use JavaScript submission
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const userData = {
+      username: formData.get('username'),
+      email: formData.get('email'),
+      password: formData.get('password'),
+      emailVerified: isEmailVerified,
+      otpId: otpMongoId
+    };
+
+    signupBtn.disabled = true;
+    signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+
+    try {
+      const response = await fetch('/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast('successToast', 'Account created successfully!');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+      } else {
+        showToast('errorToast', result.message || 'Failed to create account');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      // If JavaScript submission fails, fall back to regular form submission
+      showToast('errorToast', 'Retrying with standard submission...');
+      setTimeout(() => {
+        useJavaScriptSubmission = false;
+        updateHiddenFields();
+        this.submit(); // Submit the form normally
+      }, 1000);
+    } finally {
+      signupBtn.disabled = false;
+      signupBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Sign Up';
+    }
+  });
+
+  // Helper Functions
+  function showOtpSection() {
+    otpSection.style.display = 'block';
+    otpInput.focus();
+    verifyEmailBtn.innerHTML = '<i class="fas fa-check me-1"></i>Sent';
+    verifyEmailBtn.classList.remove('btn-outline-primary');
+    verifyEmailBtn.classList.add('btn-outline-success');
+  }
+
+  function hideOtpSection() {
+    otpSection.style.display = 'none';
+  }
+
+  function showEmailVerified() {
+    emailVerifiedBadge.style.display = 'block';
+    emailInput.classList.add('is-valid');
+  }
+
+  function updateHiddenFields() {
+    emailVerifiedField.value = isEmailVerified ? 'true' : 'false';
+    otpIdField.value = otpMongoId || '';
+  }
+
+  function resetEmailVerification() {
+    isEmailVerified = false;
+    otpMongoId = null;
+    hideOtpSection();
+    emailVerifiedBadge.style.display = 'none';
+    emailInput.classList.remove('is-valid');
+    verifyEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Verify';
+    verifyEmailBtn.classList.remove('btn-outline-success');
+    verifyEmailBtn.classList.add('btn-outline-primary');
+    updateHiddenFields();
+  }
+
+  function showToast(toastId, message) {
+    const toastEl = document.getElementById(toastId);
+    const messageEl = document.getElementById(toastId.replace('Toast', 'Message'));
+    if (messageEl) messageEl.textContent = message;
+    
+    // Check if bootstrap is available
+    if (typeof bootstrap !== 'undefined') {
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    } else {
+      // Fallback to simple alert if bootstrap is not available
+      alert(message);
+    }
+  }
+
+  // Password toggle functionality
+  document.querySelector('.toggle-password').addEventListener('click', function() {
+    const passwordField = document.getElementById('password');
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
+});
+</script>

@@ -14,9 +14,11 @@ import session from "express-session";
 import passport from "passport";
 import flash from "connect-flash"
 import ejsMate from "ejs-mate"
+import nodemailer from "nodemailer"
 
 import Url from './models/url.js'
 import User from "./models/user.js";
+import OTP from './models/otp.js'
 
 const app = express();
 const PORT = process.env.PORT || 3500;
@@ -118,17 +120,17 @@ const isLoggedIn = (req, res, next) => {
 };
 
 // Session validation middleware
-app.use((req, res, next) => {
-    if (req.isAuthenticated() && req.user.activeSessionId && req.user.activeSessionId !== req.sessionID) {
-        req.logout((err) => {
-            if (err) console.error("Error during forced logout:", err);
-            req.flash("error", "Your session has been terminated due to login from another device.");
-            return res.redirect("/login");
-        });
-        return;
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (req.isAuthenticated() && req.user.activeSessionId && req.user.activeSessionId !== req.sessionID) {
+//         req.logout((err) => {
+//             if (err) console.error("Error during forced logout:", err);
+//             req.flash("error", "Your session has been terminated due to login from another device.");
+//             // return res.redirect("/login");
+//         });
+//         return;
+//     }
+//     next();
+// });
 
 // Routes
 
@@ -142,30 +144,242 @@ app.get("/signup", (req, res) => {
     res.render("signup.ejs");
 });
 
+// app.post("/signup", async (req, res, next) => {
+//     try {
+//         let { username, email, password } = req.body;
+//         const newUser = new User({ username, email });
+//         const registeredUser = await User.register(newUser, password);
+        
+//         req.login(registeredUser, async (err) => {
+//             if (err) return next(err);
+            
+//             try {
+//                 registeredUser.activeSessionId = req.sessionID;
+//                 await registeredUser.save();
+//             } catch (saveErr) {
+//                 console.error("Error saving session ID for new user:", saveErr);
+//             }
+            
+//             req.flash("success", "Welcome to URL Shortener!");
+//             res.redirect("/?success=true");
+//         });
+//     } catch (err) {
+//         req.flash("error", err.message);
+//         res.redirect("/signup");
+//     }
+// });
+
+
 app.post("/signup", async (req, res, next) => {
+    console.log("=== SIGNUP ROUTE START ===");
+    console.log("Request headers:", req.headers['content-type']);
+    console.log("Session ID:", req.sessionID);
+    
     try {
         let { username, email, password } = req.body;
+        console.log("Creating user with:", { username, email });
+        
         const newUser = new User({ username, email });
         const registeredUser = await User.register(newUser, password);
+        console.log("User registered successfully:", registeredUser._id);
         
-        req.login(registeredUser, async (err) => {
-            if (err) return next(err);
-            
-            try {
-                registeredUser.activeSessionId = req.sessionID;
-                await registeredUser.save();
-            } catch (saveErr) {
-                console.error("Error saving session ID for new user:", saveErr);
+        req.login(registeredUser, (err) => {
+            if (err) {
+                console.error("Login error after registration:", err);
+                return next(err);
             }
             
-            req.flash("success", "Welcome to URL Shortener!");
-            res.redirect("/?success=true");
+            console.log("User logged in successfully");
+            console.log("req.user after login:", req.user ? req.user._id : 'No user');
+            console.log("req.isAuthenticated():", req.isAuthenticated());
+            
+            // Save session explicitly
+            req.session.save((saveErr) => {
+                if (saveErr) {
+                    console.error("Session save error:", saveErr);
+                }
+                
+                // Update user with session ID
+                registeredUser.activeSessionId = req.sessionID;
+                registeredUser.save().then(() => {
+                    console.log("Session ID saved to user");
+                    
+                    // Check if this is a JSON request
+                    if (req.headers['content-type'] === 'application/json') {
+                        console.log("Sending JSON response");
+                        res.json({ 
+                            success: true, 
+                            message: "Account created successfully!",
+                            redirectUrl: "/"
+                        });
+                    } else {
+                        console.log("Doing redirect response");
+                        req.flash("success", "Welcome to URL Shortener!");
+                        res.redirect("/?success=true");
+                    }
+                }).catch((userSaveErr) => {
+                    console.error("Error saving session ID to user:", userSaveErr);
+                    // Still proceed with response even if this fails
+                    if (req.headers['content-type'] === 'application/json') {
+                        res.json({ 
+                            success: true, 
+                            message: "Account created successfully!",
+                            redirectUrl: "/"
+                        });
+                    } else {
+                        req.flash("success", "Welcome to URL Shortener!");
+                        res.redirect("/?success=true");
+                    }
+                });
+            });
         });
     } catch (err) {
-        req.flash("error", err.message);
-        res.redirect("/signup");
+        console.error("Signup error:", err);
+        if (req.headers['content-type'] === 'application/json') {
+            res.status(400).json({ 
+                success: false, 
+                message: err.message 
+            });
+        } else {
+            req.flash("error", err.message);
+            res.redirect("/signup");
+        }
     }
 });
+
+// Email transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: "smtp.gmail.com", // SMTP server host
+  port: 465, // Port for SSL/TLS
+  secure: true, // Use SSL/TLS (for port 465, secure should be true)
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// Generate 6-digit OTP
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Send OTP Route
+app.post('/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Validate email
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    // Delete any existing OTP for this email
+    await OTP.deleteMany({ email });
+
+    // Generate new OTP
+    const otp = generateOTP();
+
+    // Create OTP document
+    const otpDoc = new OTP({
+      email,
+      otp,
+      expiry: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      attempts: 0
+    });
+
+    const savedOTP = await otpDoc.save();
+
+    // Send email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Email Verification - URL Shortener',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0d6efd;">Email Verification</h2>
+          <p>Your verification code is:</p>
+          <h1 style="background: #f8f9fa; padding: 20px; text-align: center; font-size: 2em; letter-spacing: 5px; color: #0d6efd;">${otp}</h1>
+          <p>This code will expire in 10 minutes.</p>
+          <p>If you didn't request this verification, please ignore this email.</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({
+      success: true,
+      message: 'OTP sent successfully',
+      otpId: savedOTP._id.toString()
+    });
+
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    res.status(500).json({ message: 'Failed to send OTP' });
+  }
+});
+
+// Verify OTP Route
+app.post('/verify-otp', async (req, res) => {
+  try {
+    const { otpId, otp } = req.body;
+
+    // Validate input
+    if (!otpId || !otp) {
+      return res.status(400).json({ message: 'OTP ID and OTP are required' });
+    }
+
+    // Find OTP document
+    const otpDoc = await OTP.findById(otpId);
+
+    if (!otpDoc) {
+      return res.status(404).json({ message: 'Invalid OTP ID' });
+    }
+
+    // Check if expired
+    if (new Date() > otpDoc.expiry) {
+      await OTP.findByIdAndDelete(otpId);
+      return res.status(400).json({ message: 'OTP has expired' });
+    }
+
+    // Check attempts (rate limiting)
+    if (otpDoc.attempts >= 3) {
+      await OTP.findByIdAndDelete(otpId);
+      return res.status(400).json({ message: 'Too many attempts. Please request a new OTP.' });
+    }
+
+    // Verify OTP
+    if (otpDoc.otp !== otp) {
+      // Increment attempts
+      otpDoc.attempts += 1;
+      await otpDoc.save();
+      return res.status(400).json({ message: 'Incorrect OTP' });
+    }
+
+    // OTP is correct - mark as verified
+    otpDoc.verified = true;
+    await otpDoc.save();
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully',
+      otpId: otpId
+    });
+
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    res.status(500).json({ message: 'Failed to verify OTP' });
+  }
+});
+
+
+
 
 app.get("/login", (req, res) => {
     res.render("login.ejs");
